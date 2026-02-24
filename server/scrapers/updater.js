@@ -26,7 +26,7 @@ export const updateGameProvidersFile = async (scrapedData) => {
       if (providerId in updatedProviders) {
         // Merge with existing games, removing duplicates
         const existingGames = new Set(
-          updatedProviders[providerId].map((g) => g.toLowerCase().trim())
+          updatedProviders[providerId].map((g) => g.toLowerCase().trim()),
         )
         const mergedGames = [...updatedProviders[providerId]]
 

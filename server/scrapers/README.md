@@ -5,6 +5,7 @@ This module automatically fetches the latest game lists from slot provider websi
 ## How It Works
 
 The scraper fetches game lists from:
+
 - **Pragmatic Play** - https://www.pragmaticplay.com/en/games/
 - **Play'n GO** - https://www.playngo.com/games/slots/
 - **NetEnt** - https://www.netent.com/en/games/
@@ -16,6 +17,7 @@ The scraper fetches game lists from:
 ## Usage
 
 ### Via Admin UI
+
 1. Open the admin page at `/admin`
 2. Click the "🔄 Uppdatera spellista" button in the game search section
 3. Wait for the scraping to complete (may take 30-60 seconds)
@@ -23,6 +25,7 @@ The scraper fetches game lists from:
 5. Reload the page to see the updated game list
 
 ### Via API
+
 Send a POST request to `/admin/scrape-games`:
 
 ```bash
@@ -30,6 +33,7 @@ curl -X POST http://localhost:5174/admin/scrape-games
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -67,15 +71,16 @@ Response:
 To add a new provider:
 
 1. Add a scraper function in `server/scrapers/index.js`:
+
 ```javascript
 export const scrapeNewProvider = async () => {
   const response = await fetch("https://provider.com/games")
   const html = await response.text()
   const $ = cheerio.load(html)
   const games = new Set()
-  
+
   // Add scraping logic here
-  
+
   return Array.from(games).sort()
 }
 ```

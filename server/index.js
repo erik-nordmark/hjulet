@@ -25,7 +25,7 @@ const initializeGameProviderMap = () => {
   console.log(
     `Loaded ${Object.keys(GAME_TO_PROVIDER).length} games across ${
       Object.keys(SLOT_PROVIDERS).length
-    } providers`
+    } providers`,
   )
 }
 
@@ -427,7 +427,7 @@ const createApp = () => {
       }
 
       const duplicateName = state.games.some(
-        (game) => game.name.toLowerCase() === name.toLowerCase()
+        (game) => game.name.toLowerCase() === name.toLowerCase(),
       )
       if (duplicateName) {
         res.status(409).json({ error: "Game already exists.", code: "duplicate-name" })
@@ -820,7 +820,7 @@ const createApp = () => {
         connectedDevices: getConnectedDevices(),
         deviceLimit: DEVICE_LIMIT,
         submittedDeviceIds: Object.keys(state.submissionsByDevice),
-      })}\n\n`
+      })}\n\n`,
     )
 
     // Notify other clients about the new connection

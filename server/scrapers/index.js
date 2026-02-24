@@ -270,7 +270,7 @@ export const scrapeAllProviders = async () => {
   }
 
   console.log(
-    `Scraping complete: ${successCount} providers succeeded, ${failCount} providers failed`
+    `Scraping complete: ${successCount} providers succeeded, ${failCount} providers failed`,
   )
 
   return {

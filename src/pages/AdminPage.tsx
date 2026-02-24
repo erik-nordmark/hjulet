@@ -148,7 +148,7 @@ const AdminPage = () => {
         window.clearTimeout(spinFallbackRef.current)
       }
     },
-    []
+    [],
   )
 
   const helperText = useMemo(() => {
@@ -175,7 +175,7 @@ const AdminPage = () => {
 
     return SLOT_GAMES.filter(
       (slot) =>
-        slot.name.toLowerCase().includes(query) || slot.provider.toLowerCase().includes(query)
+        slot.name.toLowerCase().includes(query) || slot.provider.toLowerCase().includes(query),
     ).slice(0, 60)
   }, [searchTerm])
 
@@ -383,8 +383,8 @@ const AdminPage = () => {
 
     const targetUserId = selectedUserId || currentUser?.id || ""
     const targetUserName = selectedUserId
-      ? users.find((user) => user.id === selectedUserId)?.name ?? "spelaren"
-      : currentUser?.name ?? "spelaren"
+      ? (users.find((user) => user.id === selectedUserId)?.name ?? "spelaren")
+      : (currentUser?.name ?? "spelaren")
 
     if (!targetUserId) {
       setError("Välj vilken spelare du vill lägga till spelet för.")
@@ -433,8 +433,8 @@ const AdminPage = () => {
 
     const targetUserId = selectedUserId || currentUser?.id || ""
     const targetUserName = selectedUserId
-      ? users.find((user) => user.id === selectedUserId)?.name ?? "spelaren"
-      : currentUser?.name ?? "spelaren"
+      ? (users.find((user) => user.id === selectedUserId)?.name ?? "spelaren")
+      : (currentUser?.name ?? "spelaren")
 
     if (!targetUserId) {
       setError("Välj en spelare innan du slumpas fram ett spel.")
@@ -444,7 +444,7 @@ const AdminPage = () => {
 
     const lowerCaseGames = new Set(games.map((game) => game.name.toLowerCase()))
     const availableOptions = UNDECIDED_SLOTS.filter(
-      (slot) => !lowerCaseGames.has(slot.toLowerCase())
+      (slot) => !lowerCaseGames.has(slot.toLowerCase()),
     )
     if (availableOptions.length === 0) {
       setError("Alla slumpförslag finns redan på hjulet just nu.")
@@ -537,16 +537,13 @@ const AdminPage = () => {
         }
       }
 
-      resultMessage +=
-        "\nOBS: Ladda om sidan för att se de nya spelen i sökresultaten."
+      resultMessage += "\nOBS: Ladda om sidan för att se de nya spelen i sökresultaten."
 
       setScrapeResults(resultMessage)
       setSuccessMessage("Spelets databas har uppdaterats!")
     } catch (error) {
       setError(
-        error instanceof Error
-          ? `Fel vid scraping: ${error.message}`
-          : "Ett okänt fel inträffade"
+        error instanceof Error ? `Fel vid scraping: ${error.message}` : "Ett okänt fel inträffade",
       )
     } finally {
       setIsScrapingGames(false)
@@ -572,7 +569,7 @@ const AdminPage = () => {
               <p className="wheel-overlay__text">Snurrar…</p>
             </div>
           </div>,
-          document.body
+          document.body,
         )
       : null
 
