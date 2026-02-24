@@ -107,8 +107,15 @@ function generateGameProvidersFile(providersData) {
     content += `  ${providerId}: [\n`
     for (let j = 0; j < games.length; j++) {
       const game = games[j]
+      // Escape single quotes and backslashes, remove any newlines or control characters
+      const cleanGame = game
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/\r?\n/g, " ")
+        .replace(/\t/g, " ")
+        .trim()
       const comma = j < games.length - 1 ? "," : ""
-      content += `    '${game.replace(/'/g, "\\'")}${comma}\n`
+      content += `    '${cleanGame}'${comma}\n`
     }
     content += `  ]${isLast ? "" : ","}\n`
   }

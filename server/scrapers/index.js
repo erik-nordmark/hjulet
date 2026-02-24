@@ -46,6 +46,7 @@ export const scrapePlaynGo = async () => {
     const response = await fetch("https://www.playngo.com/games/slots/", {
       headers: {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       },
     })
     const html = await response.text()
@@ -53,15 +54,36 @@ export const scrapePlaynGo = async () => {
 
     const games = new Set()
 
-    // Try to find game titles
-    $('[class*="slot"], [class*="game"]').each((_, elem) => {
-      const title =
-        $(elem).find("h2, h3, h4, [class*=title]").text().trim() ||
-        $(elem).attr("data-game-name")?.trim() ||
-        $(elem).find("img").attr("alt")?.trim()
+    // Try multiple strategies to find games
+    // Strategy 1: Look for game cards/items
+    $('[class*="game"], [class*="slot"], [data-game], .game-item, .slot-item, article, .card').each(
+      (_, elem) => {
+        const $elem = $(elem)
+        const title =
+          $elem.find("h1, h2, h3, h4, h5, [class*=title], [class*=name]").first().text().trim() ||
+          $elem.attr("data-game-name")?.trim() ||
+          $elem.attr("data-title")?.trim() ||
+          $elem.attr("title")?.trim() ||
+          $elem.find("img").first().attr("alt")?.trim() ||
+          $elem.find("img").first().attr("title")?.trim()
 
-      if (title && title.length > 2 && !title.toLowerCase().includes("slots")) {
-        games.add(title)
+        if (title && title.length > 2 && !title.toLowerCase().includes("slot")) {
+          games.add(title)
+        }
+      },
+    )
+
+    // Strategy 2: Look for JSON data in script tags
+    $("script").each((_, elem) => {
+      const scriptContent = $(elem).html() || ""
+      const gameMatches = scriptContent.match(/"name"\s*:\s*"([^"]+)"/g)
+      if (gameMatches) {
+        for (const match of gameMatches) {
+          const name = match.match(/"name"\s*:\s*"([^"]+)"/)?.[1]
+          if (name && name.length > 2) {
+            games.add(name)
+          }
+        }
       }
     })
 
@@ -81,6 +103,7 @@ export const scrapeNetEnt = async () => {
     const response = await fetch("https://www.netent.com/en/games/", {
       headers: {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       },
     })
     const html = await response.text()
@@ -88,14 +111,46 @@ export const scrapeNetEnt = async () => {
 
     const games = new Set()
 
-    $('[class*="game"], [data-game]').each((_, elem) => {
-      const title =
-        $(elem).find("h1, h2, h3, [class*=title], [class*=name]").text().trim() ||
-        $(elem).attr("data-game-name")?.trim() ||
-        $(elem).find("img").attr("alt")?.trim()
+    // Try multiple strategies to find games
+    $('[class*="game"], [class*="product"], [data-game], .card, article, [class*="item"]').each(
+      (_, elem) => {
+        const $elem = $(elem)
+        const title =
+          $elem
+            .find("h1, h2, h3, h4, [class*=title], [class*=name], [class*=label]")
+            .first()
+            .text()
+            .trim() ||
+          $elem.attr("data-game-name")?.trim() ||
+          $elem.attr("data-title")?.trim() ||
+          $elem.attr("title")?.trim() ||
+          $elem.find("img").first().attr("alt")?.trim() ||
+          $elem.find("img").first().attr("title")?.trim()
 
-      if (title && title.length > 2) {
-        games.add(title)
+        if (
+          title &&
+          title.length > 2 &&
+          !title.toLowerCase().includes("game") &&
+          !title.toLowerCase().includes("slot")
+        ) {
+          games.add(title)
+        }
+      },
+    )
+
+    // Strategy 2: Look for JSON data
+    $("script").each((_, elem) => {
+      const scriptContent = $(elem).html() || ""
+      const titleMatches =
+        scriptContent.match(/"title"\s*:\s*"([^"]+)"/g) ||
+        scriptContent.match(/"name"\s*:\s*"([^"]+)"/g)
+      if (titleMatches) {
+        for (const match of titleMatches) {
+          const name = match.match(/:\s*"([^"]+)"/)?.[1]
+          if (name && name.length > 2) {
+            games.add(name)
+          }
+        }
       }
     })
 
@@ -149,6 +204,7 @@ export const scrapeNolimitCity = async () => {
     const response = await fetch("https://nolimitcity.com/games/", {
       headers: {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       },
     })
     const html = await response.text()
@@ -156,13 +212,41 @@ export const scrapeNolimitCity = async () => {
 
     const games = new Set()
 
-    $('[class*="game"], [class*="slot"]').each((_, elem) => {
-      const title =
-        $(elem).find("h1, h2, h3, [class*=title], [class*=name]").text().trim() ||
-        $(elem).find("img").attr("alt")?.trim()
+    // Try multiple strategies
+    $('[class*="game"], [class*="slot"], [class*="product"], [data-game], .card, article').each(
+      (_, elem) => {
+        const $elem = $(elem)
+        const title =
+          $elem.find("h1, h2, h3, h4, h5, [class*=title], [class*=name]").first().text().trim() ||
+          $elem.attr("data-game")?.trim() ||
+          $elem.attr("data-title")?.trim() ||
+          $elem.attr("title")?.trim() ||
+          $elem.find("img").first().attr("alt")?.trim() ||
+          $elem.find("img").first().attr("title")?.trim()
 
-      if (title && title.length > 2) {
-        games.add(title)
+        if (title && title.length > 2 && !title.toLowerCase().includes("game")) {
+          games.add(title)
+        }
+      },
+    )
+
+    // Look for JSON data
+    $("script[type='application/json'], script[type='application/ld+json']").each((_, elem) => {
+      try {
+        const data = JSON.parse($(elem).html() || "{}")
+        const extractNames = (obj) => {
+          if (Array.isArray(obj)) {
+            obj.forEach(extractNames)
+          } else if (obj && typeof obj === "object") {
+            if (obj.name && typeof obj.name === "string" && obj.name.length > 2) {
+              games.add(obj.name)
+            }
+            Object.values(obj).forEach(extractNames)
+          }
+        }
+        extractNames(data)
+      } catch (e) {
+        // Ignore JSON parse errors
       }
     })
 
@@ -215,6 +299,7 @@ export const scrapeELKStudios = async () => {
     const response = await fetch("https://www.elk-studios.com/games/", {
       headers: {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       },
     })
     const html = await response.text()
@@ -222,13 +307,44 @@ export const scrapeELKStudios = async () => {
 
     const games = new Set()
 
-    $('[class*="game"]').each((_, elem) => {
+    // Try multiple strategies
+    $(
+      '[class*="game"], [class*="product"], [data-game], .card, article, [class*="portfolio"]',
+    ).each((_, elem) => {
+      const $elem = $(elem)
       const title =
-        $(elem).find("h1, h2, h3, [class*=title]").text().trim() ||
-        $(elem).find("img").attr("alt")?.trim()
+        $elem.find("h1, h2, h3, h4, [class*=title], [class*=name]").first().text().trim() ||
+        $elem.attr("data-game")?.trim() ||
+        $elem.attr("data-title")?.trim() ||
+        $elem.attr("title")?.trim() ||
+        $elem.find("img").first().attr("alt")?.trim() ||
+        $elem.find("img").first().attr("title")?.trim()
 
-      if (title && title.length > 2) {
+      if (title && title.length > 2 && !title.toLowerCase().includes("game")) {
         games.add(title)
+      }
+    })
+
+    // Look for JSON-LD or embedded data
+    $("script").each((_, elem) => {
+      const scriptContent = $(elem).html() || ""
+
+      // Try to find game names in various formats
+      const patterns = [
+        /"title"\s*:\s*"([^"]+)"/g,
+        /"name"\s*:\s*"([^"]+)"/g,
+        /'title'\s*:\s*'([^']+)'/g,
+        /'name'\s*:\s*'([^']+)'/g,
+      ]
+
+      for (const pattern of patterns) {
+        const matches = scriptContent.matchAll(pattern)
+        for (const match of matches) {
+          const name = match[1]
+          if (name && name.length > 2 && !name.toLowerCase().includes("elk")) {
+            games.add(name)
+          }
+        }
       }
     })
 
