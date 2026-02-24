@@ -1,0 +1,87 @@
+{
+  "games": [],
+  "isLocked": false,
+  "submissionsByDevice": {},
+  "users": [
+    {
+      "id": "784a0761-2a98-4ba9-b977-b003b40999e4",
+      "name": "Simon Takman",
+      "deviceIds": [
+        "1761660955610-428cb42ac1ee2"
+      ],
+      "totalProfit": 0,
+      "rounds": []
+    },
+    {
+      "id": "6acf8175-2736-42a2-b715-ec7f928bd1c7",
+      "name": "Erik  Nordmark",
+      "deviceIds": [
+        "1761660955690-ff2da4623d848"
+      ],
+      "totalProfit": 238.89999999999998,
+      "rounds": [
+        {
+          "id": "03951312-24b6-4c1c-b53e-1671bc82a7c0",
+          "gameId": "f5cab33e-fb11-4b45-bb6a-55feb27777b0",
+          "gameName": "Montezuma",
+          "provider": "Unknown",
+          "userId": "6acf8175-2736-42a2-b715-ec7f928bd1c7",
+          "userName": "Erik  Nordmark",
+          "before": 100,
+          "after": 176.9,
+          "delta": 76.9,
+          "createdAt": "2025-10-28T14:24:58.097Z"
+        },
+        {
+          "id": "98296a8b-9931-4c66-bc47-b54ad189d9d8",
+          "gameId": "1a8e5b58-5b22-47e3-92fb-f19e39bb1d86",
+          "gameName": "Release the Kraken",
+          "provider": "Pragmatic Play",
+          "userId": "6acf8175-2736-42a2-b715-ec7f928bd1c7",
+          "userName": "Erik  Nordmark",
+          "before": 176.9,
+          "after": 338.9,
+          "delta": 161.99999999999997,
+          "createdAt": "2025-10-28T14:31:00.913Z"
+        }
+      ]
+    },
+    {
+      "id": "9d6d472b-e703-4274-acf4-aacc9f669d2e",
+      "name": "Simon",
+      "deviceIds": [
+        "1761661097174-eafea68075a3e"
+      ],
+      "totalProfit": 0,
+      "rounds": []
+    }
+  ],
+  "history": [
+    {
+      "id": "03951312-24b6-4c1c-b53e-1671bc82a7c0",
+      "gameId": "f5cab33e-fb11-4b45-bb6a-55feb27777b0",
+      "gameName": "Montezuma",
+      "provider": "Unknown",
+      "userId": "6acf8175-2736-42a2-b715-ec7f928bd1c7",
+      "userName": "Erik  Nordmark",
+      "before": 100,
+      "after": 176.9,
+      "delta": 76.9,
+      "createdAt": "2025-10-28T14:24:58.097Z"
+    },
+    {
+      "id": "98296a8b-9931-4c66-bc47-b54ad189d9d8",
+      "gameId": "1a8e5b58-5b22-47e3-92fb-f19e39bb1d86",
+      "gameName": "Release the Kraken",
+      "provider": "Pragmatic Play",
+      "userId": "6acf8175-2736-42a2-b715-ec7f928bd1c7",
+      "userName": "Erik  Nordmark",
+      "before": 176.9,
+      "after": 338.9,
+      "delta": 161.99999999999997,
+      "createdAt": "2025-10-28T14:31:00.913Z"
+    }
+  ],
+  "spinCount": 2,
+  "lastBonusAt": 0
+}
