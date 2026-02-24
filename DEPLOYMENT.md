@@ -7,6 +7,10 @@ This application consists of two parts:
 - **Frontend**: React + Vite SPA (CSR only) → Deploy to Netlify ✅
 - **Backend**: Node.js/Express API → Deploy separately ⚠️
 
+**Current Production Setup:**
+- Backend API: `https://plastics-meters-cocktail-industrial.trycloudflare.com`
+- API URL is already configured in `netlify.toml` and `.env.production`
+
 ## Frontend Deployment to Netlify
 
 ### Option 1: Deploy via Netlify UI (Recommended)
@@ -20,10 +24,11 @@ This application consists of two parts:
    - Build command: `npm run build`
    - Publish directory: `dist`
 
-3. **Environment Variables**
-   - Add `VITE_API_BASE_URL` in Site settings → Environment variables
-   - Set it to your backend URL (see backend deployment options below)
-   - Example: `https://your-backend.render.com`
+3. **Environment Variables** (Already Configured ✅)
+   - The `VITE_API_BASE_URL` is already set in `netlify.toml`
+   - Current value: `https://plastics-meters-cocktail-industrial.trycloudflare.com`
+   - No manual configuration needed unless you change the backend URL
+   - To override: Site settings → Environment variables
 
 4. **Deploy**
    - Click "Deploy site"
