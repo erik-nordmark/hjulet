@@ -1,0 +1,11 @@
+services:
+  hjulet-api:
+    build: .
+    container_name: hjulet-api
+    restart: unless-stopped
+    ports:
+      - "5174:5174"
+    volumes:
+      - ./server/data:/app/server/data
+    environment:
+      - NODE_ENV=production

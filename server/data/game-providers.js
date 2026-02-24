@@ -381,3 +381,14 @@ export const SLOT_GAMES = Object.entries(SLOT_GAMES_BY_PROVIDER).flatMap(
       name,
     })),
 )
+
+// Build a map from game name (lowercase) to provider ID for quick lookup
+export const buildGameProviderMap = () => {
+  const map = {}
+  for (const [providerId, games] of Object.entries(SLOT_GAMES_BY_PROVIDER)) {
+    for (const game of games) {
+      map[game.toLowerCase().trim()] = providerId
+    }
+  }
+  return map
+}
