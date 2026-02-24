@@ -59,6 +59,8 @@ const AdminPage = () => {
   >({})
   const [newUserName, setNewUserName] = useState("")
   const [selectedUserId, setSelectedUserId] = useState<string>("")
+  const [isScrapingGames, setIsScrapingGames] = useState(false)
+  const [scrapeResults, setScrapeResults] = useState<string | null>(null)
   const buttonPulseTimeoutRef = useRef<number | null>(null)
   const tickIntervalRef = useRef<number | null>(null)
   const spinFallbackRef = useRef<number | null>(null)
@@ -500,6 +502,57 @@ const AdminPage = () => {
     }
   }
 
+  const handleScrapeGames = async () => {
+    setIsScrapingGames(true)
+    setError(null)
+    setScrapeResults(null)
+
+    try {
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5174"
+      const response = await fetch(`${API_BASE}/admin/scrape-games`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        setError(data.error || "Failed to scrape games")
+        return
+      }
+
+      const { scrapeStats, updateStats } = data
+      let resultMessage = `Scraping lyckades! ${scrapeStats.successCount}/${scrapeStats.totalProviders} leverantörer uppdaterade.\n\n`
+
+      if (updateStats) {
+        const providers = Object.keys(updateStats)
+        if (providers.length > 0) {
+          resultMessage += "Uppdateringar:\n"
+          for (const providerId of providers) {
+            const stat = updateStats[providerId]
+            if (stat.added > 0) {
+              resultMessage += `• ${providerId}: +${stat.added} nya spel (totalt ${stat.newCount})\n`
+            }
+          }
+        }
+      }
+
+      resultMessage +=
+        "\nOBS: Ladda om sidan för att se de nya spelen i sökresultaten."
+
+      setScrapeResults(resultMessage)
+      setSuccessMessage("Spelets databas har uppdaterats!")
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? `Fel vid scraping: ${error.message}`
+          : "Ett okänt fel inträffade"
+      )
+    } finally {
+      setIsScrapingGames(false)
+    }
+  }
+
   const joinUrl = typeof window !== "undefined" ? `${window.location.origin}/join` : "/join"
 
   const fullscreenOverlay =
@@ -627,6 +680,15 @@ const AdminPage = () => {
               >
                 Slumpa spel
               </button>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={handleScrapeGames}
+                disabled={isScrapingGames}
+                title="Hämta de senaste spelen från leverantörernas webbplatser"
+              >
+                {isScrapingGames ? "Uppdaterar..." : "🔄 Uppdatera spellista"}
+              </button>
               <p className="slot-search__hint">
                 Förslag från NetEnt, Hacksaw Gaming, Play'n GO, Pragmatic Play, Nolimit City, Push
                 Gaming och ELK Studios.
@@ -634,6 +696,11 @@ const AdminPage = () => {
             </div>
             {error && <p className="form-error">{error}</p>}
             {successMessage && <p className="form-success">{successMessage}</p>}
+            {scrapeResults && (
+              <div className="form-info" style={{ whiteSpace: "pre-line" }}>
+                {scrapeResults}
+              </div>
+            )}
             {searchTerm.trim() ? (
               <ul className="slot-search__results">
                 {filteredSlots.length === 0 ? (

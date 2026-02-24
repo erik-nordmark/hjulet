@@ -6,6 +6,8 @@ import { fileURLToPath } from "url"
 import { randomUUID } from "crypto"
 import { networkInterfaces } from "os"
 import { SLOT_PROVIDERS, buildGameProviderMap } from "./data/game-providers.js"
+import { scrapeAllProviders } from "./scrapers/index.js"
+import { updateGameProvidersFile } from "./scrapers/updater.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -734,6 +736,58 @@ const createApp = () => {
     } catch (error) {
       console.error("Failed to reset system", error)
       res.status(500).json({ error: "Failed to reset system." })
+    }
+  })
+
+  app.post("/admin/scrape-games", async (_req, res) => {
+    try {
+      console.log("Starting game scraping process...")
+
+      // Scrape all providers
+      const scrapeResult = await scrapeAllProviders()
+
+      if (!scrapeResult.success) {
+        res.status(500).json({
+          success: false,
+          error: "Failed to scrape any providers",
+          details: scrapeResult,
+        })
+        return
+      }
+
+      // Update the game providers file
+      const updateResult = await updateGameProvidersFile(scrapeResult.data)
+
+      if (!updateResult.success) {
+        res.status(500).json({
+          success: false,
+          error: "Failed to update game providers file",
+          details: updateResult.error,
+        })
+        return
+      }
+
+      // Reload the game provider map
+      initializeGameProviderMap()
+
+      res.json({
+        success: true,
+        message: "Successfully scraped and updated game providers",
+        scrapeStats: {
+          successCount: scrapeResult.successCount,
+          failCount: scrapeResult.failCount,
+          totalProviders: scrapeResult.totalProviders,
+        },
+        updateStats: updateResult.stats,
+        backupPath: updateResult.backupPath,
+      })
+    } catch (error) {
+      console.error("Failed to scrape games:", error)
+      res.status(500).json({
+        success: false,
+        error: "Failed to scrape games",
+        details: error.message,
+      })
     }
   })
 
