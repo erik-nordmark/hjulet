@@ -1,0 +1,105 @@
+.bonus-wheel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  color: white;
+}
+
+.bonus-wheel__title {
+  font-size: 4rem;
+  margin-bottom: 3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5rem;
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 20px rgba(255, 215,Human: 0, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+  }
+}
+
+.bonus-wheel__container {
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
+.bonus-wheel__wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 8px solid #ffd700;
+  position: relative;
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+  background: conic-gradient(
+    #ff6b6b 0deg 90deg,
+    #4ecdc4 90deg 180deg,
+    #95e1d3 180deg 270deg,
+    #ffe66d 270deg 360deg
+  );
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.bonus-wheel__wheel--spinning {
+  transition-duration: 3s;
+}
+
+.bonus-wheel__prize {
+  position: absolute;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  transform: translate(-50%, -50%);
+}
+
+.bonus-wheel__pointer {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 40px solid #ffd700;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+  z-index: 10;
+}
+
+.bonus-wheel__result {
+  margin-top: 3rem;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  animation: result-pulse 1s infinite;
+}
+
+@keyframes result-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}

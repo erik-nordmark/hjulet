@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { GameProvider } from "./context/GameContext"
+import { ErrorBoundary } from "./components/ErrorBoundary"
 import AdminPage from "./pages/AdminPage"
 import PlayerPage from "./pages/PlayerPage"
 import ResetPage from "./pages/ResetPage"
@@ -13,38 +14,40 @@ const Shell = ({ children }: { children: ReactNode }) => (
 )
 
 const App = () => (
-  <BrowserRouter>
-    <GameProvider>
-      <Routes>
-        <Route index element={<Navigate to="/admin" replace />} />
-        <Route
-          path="/admin"
-          element={
-            <Shell>
-              <AdminPage />
-            </Shell>
-          }
-        />
-        <Route
-          path="/join"
-          element={
-            <Shell>
-              <PlayerPage />
-            </Shell>
-          }
-        />
-        <Route
-          path="/reset"
-          element={
-            <Shell>
-              <ResetPage />
-            </Shell>
-          }
-        />
-        <Route path="*" element={<Navigate to="/admin" replace />} />
-      </Routes>
-    </GameProvider>
-  </BrowserRouter>
+  <ErrorBoundary>
+    <BrowserRouter>
+      <GameProvider>
+        <Routes>
+          <Route index element={<Navigate to="/admin" replace />} />
+          <Route
+            path="/admin"
+            element={
+              <Shell>
+                <AdminPage />
+              </Shell>
+            }
+          />
+          <Route
+            path="/join"
+            element={
+              <Shell>
+                <PlayerPage />
+              </Shell>
+            }
+          />
+          <Route
+            path="/reset"
+            element={
+              <Shell>
+                <ResetPage />
+              </Shell>
+            }
+          />
+          <Route path="*" element={<Navigate to="/admin" replace />} />
+        </Routes>
+      </GameProvider>
+    </BrowserRouter>
+  </ErrorBoundary>
 )
 
 export default App

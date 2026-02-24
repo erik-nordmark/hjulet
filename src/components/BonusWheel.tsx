@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { playApplauseSound } from "../lib/sound"
+import "./BonusWheel.css"
 
 type BonusWheelProps = {
   onComplete: (amount: number) => void
@@ -44,55 +45,17 @@ export const BonusWheel = ({ onComplete, onSpin }: BonusWheelProps) => {
   }, [onSpin, onComplete])
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.95)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000,
-        color: "white",
-      }}
-    >
-      <h1
-        style={{
-          fontSize: "4rem",
-          marginBottom: "3rem",
-          textTransform: "uppercase",
-          letterSpacing: "0.5rem",
-          color: "#FFD700",
-          textShadow: "0 0 20px rgba(255, 215, 0, 0.5)",
-        }}
-      >
+    <div className="bonus-wheel-overlay" role="dialog" aria-modal="true" aria-labelledby="bonus-wheel-title">
+      <h1 id="bonus-wheel-title" className="bonus-wheel__title">
         BONUS KÖP
       </h1>
 
-      <div
-        style={{
-          position: "relative",
-          width: "400px",
-          height: "400px",
-        }}
-      >
+      <div className="bonus-wheel__container">
         <div
-          style={{
-            width: "100%",
-            height: "100%",
-            borderRadius: "50%",
-            border: "8px solid #FFD700",
-            position: "relative",
-            transform: `rotate(${rotation}deg)`,
-            transition: isSpinning ? "transform 3s cubic-bezier(0.25, 0.1, 0.25, 1)" : "none",
-            background:
-              "conic-gradient(#FF6B6B 0deg 90deg, #4ECDC4 90deg 180deg, #95E1D3 180deg 270deg, #FFE66D 270deg 360deg)",
-            boxShadow: "0 0 40px rgba(255, 215, 0, 0.3)",
-          }}
+          className={`bonus-wheel__wheel ${isSpinning ? "bonus-wheel__wheel--spinning" : ""}`}
+          style={{ transform: `rotate(${rotation}deg)` }}
+          aria-live="polite"
+          aria-busy={isSpinning}
         >
           {PRIZES.map((prize, index) => {
             const angle = index * 90 + 45
@@ -103,16 +66,13 @@ export const BonusWheel = ({ onComplete, onSpin }: BonusWheelProps) => {
             return (
               <div
                 key={prize}
+                className="bonus-wheel__prize"
                 style={{
-                  position: "absolute",
                   left: `${x}%`,
                   top: `${y}%`,
                   transform: `translate(-50%, -50%) rotate(${angle + 90}deg)`,
-                  fontSize: "2rem",
-                  fontWeight: "bold",
-                  color: "white",
-                  textShadow: "2px 2px 4px rgba(0, 0, 0, 0.8)",
                 }}
+                aria-hidden="true"
               >
                 {prize}kr
               </div>
@@ -120,34 +80,11 @@ export const BonusWheel = ({ onComplete, onSpin }: BonusWheelProps) => {
           })}
         </div>
 
-        {/* Pointer */}
-        <div
-          style={{
-            position: "absolute",
-            top: "-30px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: 0,
-            height: 0,
-            borderLeft: "20px solid transparent",
-            borderRight: "20px solid transparent",
-            borderTop: "40px solid #FFD700",
-            filter: "drop-shadow(0 0 10px rgba(255, 215, 0, 0.5))",
-          }}
-        />
+        <div className="bonus-wheel__pointer" aria-hidden="true" />
       </div>
 
       {result && (
-        <div
-          style={{
-            marginTop: "3rem",
-            fontSize: "3rem",
-            fontWeight: "bold",
-            color: "#FFD700",
-            textShadow: "0 0 20px rgba(255, 215, 0, 0.8)",
-            animation: "pulse 1s infinite",
-          }}
-        >
+        <div className="bonus-wheel__result" role="status" aria-live="assertive">
           DU VANN {result}kr!
         </div>
       )}

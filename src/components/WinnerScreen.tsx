@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from "react"
 import { playWinSound } from "../lib/sound"
+import { Button } from "./ui/Button"
+import { Input } from "./ui/Input"
+import { Alert } from "./ui/Alert"
 
 type WinnerScreenProps = {
   gameName: string
@@ -25,10 +28,18 @@ const WinnerScreen = ({ gameName, userName, onSubmitResult, onClose }: WinnerScr
       setBeforeValue(savedBalance)
     }
 
+    // Focus management
+    const firstInput = document.querySelector<HTMLInputElement>('input[type="number"]')
+    if (firstInput && !savedBalance) {
+      firstInput.focus()
+    }
+
     return () => clearTimeout(timer)
   }, [])
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event?: React.FormEvent) => {
+    event?.preventDefault()
+    
     const before = Number(beforeValue.replace(",", "."))
     const after = Number(afterValue.replace(",", "."))
 
@@ -62,7 +73,7 @@ const WinnerScreen = ({ gameName, userName, onSubmitResult, onClose }: WinnerScr
   }, [beforeValue, afterValue])
 
   return (
-    <div className="winner-screen" role="dialog" aria-modal="true">
+    <div className="winner-screen" role="dialog" aria-modal="true" aria-labelledby="winner-title">
       <div className="winner-screen__background">
         {showParticles &&
           [...Array(24)].map((_, index) => (
@@ -85,85 +96,71 @@ const WinnerScreen = ({ gameName, userName, onSubmitResult, onClose }: WinnerScr
 
       <div className="winner-screen__panel">
         <header className="winner-screen__header">
-          <span aria-hidden>🎉</span>
-          <h1>Vi har en vinnare!</h1>
-          <span aria-hidden>🎉</span>
+          <span aria-hidden="true">🎉</span>
+          <h1 id="winner-title">Vi har en vinnare!</h1>
+          <span aria-hidden="true">🎉</span>
         </header>
 
-        <section className="winner-screen__body">
-          <div className="winner-screen__summary">
-            <p className="winner-screen__label">Spel</p>
-            <h2 className="winner-screen__value">{gameName}</h2>
-            <p className="winner-screen__label">Inlämnat av</p>
-            <h3 className="winner-screen__value winner-screen__value--secondary">{userName}</h3>
-          </div>
+        <form onSubmit={handleSubmit}>
+          <section className="winner-screen__body">
+            <div className="winner-screen__summary">
+              <p className="winner-screen__label">Spel</p>
+              <h2 className="winner-screen__value">{gameName}</h2>
+              <p className="winner-screen__label">Inlämnat av</p>
+              <h3 className="winner-screen__value winner-screen__value--secondary">{userName}</h3>
+            </div>
 
-          <div className="winner-screen__form">
-            <label>
-              Saldo före spelet
-              <input
+            <div className="winner-screen__form">
+              <Input
                 type="number"
                 step="0.01"
                 value={beforeValue}
                 onChange={(event) => setBeforeValue(event.target.value)}
+                onClear={() => setBeforeValue("")}
                 placeholder="t.ex. 500"
                 min="0"
+                label="Saldo före spelet"
+                disabled={isSaving}
+                required
               />
-              {beforeValue && (
-                <button
-                  type="button"
-                  className="clear-value-button"
-                  onClick={() => setBeforeValue("")}
-                  title="Rensa värdet"
-                >
-                  ✕
-                </button>
-              )}
-            </label>
-            <label>
-              Saldo efter spelet
-              <input
+              <Input
                 type="number"
                 step="0.01"
                 value={afterValue}
                 onChange={(event) => setAfterValue(event.target.value)}
+                onClear={() => setAfterValue("")}
                 placeholder="t.ex. 720"
                 min="0"
+                label="Saldo efter spelet"
+                disabled={isSaving}
+                required
               />
-              {afterValue && (
-                <button
-                  type="button"
-                  className="clear-value-button"
-                  onClick={() => setAfterValue("")}
-                  title="Rensa värdet"
+
+              {delta !== null && (
+                <p
+                  className={`winner-screen__delta ${
+                    delta >= 0 ? "winner-screen__delta--up" : "winner-screen__delta--down"
+                  }`}
+                  role="status"
+                  aria-live="polite"
                 >
-                  ✕
-                </button>
+                  {delta >= 0 ? "Vinst" : "Förlust"}: {delta.toFixed(2)} kr
+                </p>
               )}
-            </label>
 
-            {delta !== null && (
-              <p
-                className={`winner-screen__delta ${
-                  delta >= 0 ? "winner-screen__delta--up" : "winner-screen__delta--down"
-                }`}
-              >
-                {delta >= 0 ? "Vinst" : "Förlust"}: {delta.toFixed(2)} kr
-              </p>
-            )}
+              {error && <Alert variant="error" onClose={() => setError(null)}>{error}</Alert>}
+            </div>
+          </section>
 
-            {error && <p className="form-error winner-screen__error">{error}</p>}
-          </div>
-        </section>
-
-        <footer className="winner-screen__actions">
-          <button className="primary-button" onClick={handleSubmit} disabled={isSaving}>
-            {isSaving ? "Sparar…" : "Spara resultat"}
-          </button>
-          <button className="secondary-button" onClick={onClose} disabled={isSaving}>
-            Avbryt
-          </button>
-        </footer>
+          <footer className="winner-screen__actions">
+            <Button type="submit" variant="primary" isLoading={isSaving} disabled={isSaving || !beforeValue || !afterValue}>
+              Spara resultat
+            </Button>
+            <Button type="button" variant="secondary" onClick={onClose} disabled={isSaving}>
+              Avbryt
+            </Button>
+          </footer>
+        </form>
       </div>
     </div>
   )
