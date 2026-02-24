@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Runtime data files (user-generated content)
+server/data/state.json
+server/data/games.json
+server/data/*.backup.js
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
