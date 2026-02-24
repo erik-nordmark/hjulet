@@ -45,7 +45,12 @@ export const BonusWheel = ({ onComplete, onSpin }: BonusWheelProps) => {
   }, [onSpin, onComplete])
 
   return (
-    <div className="bonus-wheel-overlay" role="dialog" aria-modal="true" aria-labelledby="bonus-wheel-title">
+    <div
+      className="bonus-wheel-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bonus-wheel-title"
+    >
       <h1 id="bonus-wheel-title" className="bonus-wheel__title">
         BONUS KÖP
       </h1>

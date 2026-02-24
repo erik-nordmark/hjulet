@@ -24,13 +24,7 @@ export const Button = ({
   children,
   ...props
 }: ButtonProps) => {
-  const classes = [
-    "btn",
-    `btn--${variant}`,
-    `btn--${size}`,
-    isLoading && "btn--loading",
-    className,
-  ]
+  const classes = ["btn", `btn--${variant}`, `btn--${size}`, isLoading && "btn--loading", className]
     .filter(Boolean)
     .join(" ")
 

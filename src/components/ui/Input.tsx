@@ -46,12 +46,7 @@ export const Input = ({
         {leftIcon && <span className="input-icon input-icon--left">{leftIcon}</span>}
         <input id={inputId} className={inputClasses} aria-invalid={hasError} {...props} />
         {showClear && (
-          <button
-            type="button"
-            className="input-clear"
-            onClick={onClear}
-            aria-label="Rensa fält"
-          >
+          <button type="button" className="input-clear" onClick={onClear} aria-label="Rensa fält">
             ✕
           </button>
         )}

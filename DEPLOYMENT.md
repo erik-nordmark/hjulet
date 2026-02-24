@@ -8,6 +8,7 @@ This application consists of two parts:
 - **Backend**: Node.js/Express API → Deploy separately ⚠️
 
 **Current Production Setup:**
+
 - Backend API: `https://plastics-meters-cocktail-industrial.trycloudflare.com`
 - API URL is already configured in `netlify.toml` and `.env.production`
 

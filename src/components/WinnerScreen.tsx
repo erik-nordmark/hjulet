@@ -39,7 +39,7 @@ const WinnerScreen = ({ gameName, userName, onSubmitResult, onClose }: WinnerScr
 
   const handleSubmit = async (event?: React.FormEvent) => {
     event?.preventDefault()
-    
+
     const before = Number(beforeValue.replace(",", "."))
     const after = Number(afterValue.replace(",", "."))
 
@@ -148,12 +148,21 @@ const WinnerScreen = ({ gameName, userName, onSubmitResult, onClose }: WinnerScr
                 </p>
               )}
 
-              {error && <Alert variant="error" onClose={() => setError(null)}>{error}</Alert>}
+              {error && (
+                <Alert variant="error" onClose={() => setError(null)}>
+                  {error}
+                </Alert>
+              )}
             </div>
           </section>
 
           <footer className="winner-screen__actions">
-            <Button type="submit" variant="primary" isLoading={isSaving} disabled={isSaving || !beforeValue || !afterValue}>
+            <Button
+              type="submit"
+              variant="primary"
+              isLoading={isSaving}
+              disabled={isSaving || !beforeValue || !afterValue}
+            >
               Spara resultat
             </Button>
             <Button type="button" variant="secondary" onClick={onClose} disabled={isSaving}>

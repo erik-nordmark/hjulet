@@ -42,8 +42,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           <div className="error-boundary__content">
             <div className="error-boundary__icon">⚠️</div>
             <h1 className="error-boundary__title">Något gick fel</h1>
-            <p className="error-boundary__message">Ett oväntat fel har inträffat i applikationen.</p>
-            {process.env.NODE_ENV === "development" && (
+            <p className="error-boundary__message">
+              Ett oväntat fel har inträffat i applikationen.
+            </p>
+            {import.meta.env.DEV && (
               <details className="error-boundary__details">
                 <summary>Teknisk information</summary>
                 <pre className="error-boundary__stack">{this.state.error.stack}</pre>
