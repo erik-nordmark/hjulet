@@ -28,6 +28,7 @@ const PlayerPage = () => {
   const [error, setError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
+  const [customGameValue, setCustomGameValue] = useState("")
   const [expandedProviders, setExpandedProviders] = useState<
     Partial<Record<SlotProviderId, boolean>>
   >({})
@@ -198,6 +199,57 @@ const PlayerPage = () => {
     setSuccessMessage(`"${chosenName}" slumpades fram och lades till på hjulet!`)
   }
 
+  const handleCustomGameAdd = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const gameName = customGameValue.trim()
+    if (!gameName) {
+      setError("Ange ett spel att lägga till.")
+      return
+    }
+
+    if (isLocked) {
+      setError("Hjulet snurrar just nu. Försök igen när rundan är klar.")
+      setSuccessMessage(null)
+      return
+    }
+
+    if (!currentUser) {
+      setError("Registrera dig innan du lägger till spel.")
+      setSuccessMessage(null)
+      return
+    }
+
+    if (hasSubmitted) {
+      setError(`Denna enhet har redan lagt till ${deviceLimit} spel i den här rundan.`)
+      setSuccessMessage(null)
+      return
+    }
+
+    const result = await addGame(gameName)
+
+    if (!result.success) {
+      if (result.reason === "duplicate") {
+        setError("Det spelet finns redan på hjulet.")
+      } else if (result.reason === "device-limit") {
+        setError(`Max ${deviceLimit} spel per enhet.`)
+      } else if (result.reason === "network") {
+        setError("Kunde inte nå servern. Försök igen om en stund.")
+      } else if (result.reason === "no-user") {
+        setError("Registrera dig innan du lägger till spel.")
+      } else {
+        setError("Kunde inte lägga till spelet. Försök igen.")
+      }
+      setSuccessMessage(null)
+      return
+    }
+
+    setError(null)
+    setCustomGameValue("")
+    setSearchTerm("")
+    setSuccessMessage(`"${gameName}" ligger nu på hjulet!`)
+  }
+
   return (
     <div className="player-page">
       {!currentUser && (
@@ -329,6 +381,28 @@ const PlayerPage = () => {
               })}
             </div>
           )}
+        </section>
+
+        <section className="slot-search">
+          <h2>Eller lägg till ditt eget spel</h2>
+          <form onSubmit={handleCustomGameAdd} className="custom-game-form">
+            <div className="slot-search__controls">
+              <input
+                value={customGameValue}
+                onChange={(event) => setCustomGameValue(event.target.value)}
+                placeholder="Spel som inte finns i listan"
+                autoComplete="off"
+                disabled={isLoading}
+              />
+              <button
+                type="submit"
+                className="secondary-button"
+                disabled={isLoading || isLocked || hasSubmitted || !currentUser || !customGameValue.trim()}
+              >
+                Lägg till eget spel
+              </button>
+            </div>
+          </form>
         </section>
 
         <section className="player-game-list">
